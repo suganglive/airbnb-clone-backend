@@ -1,0 +1,53 @@
+from django.conf import settings
+from django.db import models
+
+from common.models import CommonModel
+
+
+class Reservation(CommonModel):
+    """Reservation Definition"""
+
+    class ReservationKindChoice(models.TextChoices):
+        ROOM = ("room", "Room")
+        EXPERIENCE = ("experience", "Experience")
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="reservations",
+    )
+    kind = models.CharField(
+        max_length=15,
+        choices=ReservationKindChoice.choices,
+        null=True,
+    )
+    room = models.ForeignKey(
+        "rooms.Room",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reservations",
+    )
+    experience = models.ForeignKey(
+        "experiences.Experience",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reservations",
+    )
+    check_in = models.DateField(
+        null=True,
+        blank=True,
+    )
+    check_out = models.DateField(
+        null=True,
+        blank=True,
+    )
+    experience_time = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    guests = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.kind.title()} booking for, {self.user}"
