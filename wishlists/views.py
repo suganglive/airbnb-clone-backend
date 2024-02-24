@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 
+from experiences.models import Experience
 from rooms.models import Room
 
 from .models import Wishlist
@@ -94,4 +95,29 @@ class WishlistRooms(APIView):
             wishlist.rooms.remove(room)
         else:
             wishlist.rooms.add(room)
+        return Response(status=HTTP_200_OK)
+
+
+class WishlistReservations(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_list(self, pk, user):
+        try:
+            return Wishlist.objects.get(pk=pk, user=user)
+        except Wishlist.DoesNotExist:
+            return NotFound
+
+    def get_experience(self, rv_pk):
+        try:
+            return Experience.objects.get(pk=rv_pk)
+        except Experience.DoesNotExist:
+            return NotFound
+
+    def put(self, request, pk, rv_pk):
+        wishlist = self.get_list(pk, request.user)
+        experience = self.get_experience(rv_pk)
+        if wishlist.experiences.filter(pk=experience.pk).exists():
+            wishlist.experiences.remove(experience)
+        else:
+            wishlist.experiences.add(experience)
         return Response(status=HTTP_200_OK)

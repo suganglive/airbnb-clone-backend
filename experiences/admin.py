@@ -9,6 +9,7 @@ class ExperienceAdmin(admin.ModelAdmin):
         "name",
         "start",
         "end",
+        "duration",
         "price",
     )
     list_filter = ("category",)

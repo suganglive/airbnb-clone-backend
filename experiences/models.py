@@ -27,8 +27,22 @@ class Experience(CommonModel):
     address = models.CharField(
         max_length=250,
     )
-    start = models.TimeField()
-    end = models.TimeField()
+    start = models.TimeField(
+        null=True,
+        blank=True,
+    )
+    end = models.TimeField(
+        null=True,
+        blank=True,
+    )
+    # duration = models.TimeField(
+    #     null=True,
+    #     blank=True,
+    # )
+    duration = models.DurationField(
+        null=True,
+        blank=True,
+    )
     description = models.TextField()
     perks = models.ManyToManyField(
         "experiences.Perk",

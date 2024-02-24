@@ -50,4 +50,5 @@ class Reservation(CommonModel):
     guests = models.PositiveIntegerField()
 
     def __str__(self):
-        return f"{self.kind.title()} booking for, {self.user}"
+        # return f"{self.kind.title()} booking for, {self.user}"
+        return f"booking for, {self.user}"
