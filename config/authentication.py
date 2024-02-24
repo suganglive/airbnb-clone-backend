@@ -1,3 +1,5 @@
+import jwt
+from django.conf import settings
 from rest_framework import exceptions
 from rest_framework.authentication import BaseAuthentication
 
@@ -19,3 +21,23 @@ class TrustAuthentication(BaseAuthentication):
 
         # return super().authenticate(request)
         return None
+
+
+class JWTAuthentication(BaseAuthentication):
+    def authenticate(self, request):
+        token = request.headers.get("Jwt")
+        if not token:
+            return None
+        decoded = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=["HS256"],
+        )
+        pk = decoded.get("pk")
+        if not pk:
+            raise exceptions.AuthenticationFailed
+        try:
+            user = User.objects.get(pk=pk)
+            return (user, None)
+        except User.DoesNotExist:
+            raise exceptions.AuthenticationFailed("User not found")
